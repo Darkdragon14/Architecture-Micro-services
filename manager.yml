@@ -1,0 +1,48 @@
+- hosts: all
+  gather_facts: false
+  become: true
+  tasks:
+    - include: my_playbook.yml
+ 
+    - name: check swarm is active
+      shell: 'docker info | grep "Swarm: active"'
+      register: swarm_active
+      ignore_errors: true
+ 
+    - name: swarm init
+      when: swarm_active.rc == 1
+      shell: docker swarm init --listen-addr {{ manager_ip }}:2377 --advertise-addr {{ manager_ip }}
+ 
+    - name: get swarm token
+      shell: docker swarm join-token -q worker > /vagrant/worker_token
+
+    - name: setup autoscaler
+      shell: docker run -d -p 8000:8000 -v /var/run/docker.sock:/var/run/docker.sock --name orbiter gianarb/orbiter daemon
+
+    - name: install docker-compose 1/2
+      shell: curl -L https://github.com/docker/compose/releases/download/1.18.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+     
+    - name: install docker-compose 2/2
+      shell: chmod +x /usr/local/bin/docker-compose
+
+    - name: create register
+      shell: docker service create --name registry -p 5000:5000 registry:2
+
+    - name: setup monitoring
+      shell: docker stack deploy traefik --compose-file /vagrant/traefik.yml
+
+    - name: create image
+      shell: docker-compose -f /vagrant/create-image.yml up -d 
+
+
+    - name : destroy compose
+      shell: docker-compose -f /vagrant/create-image.yml down --volumes
+
+    - name: create image global
+      shell: docker-compose -f /vagrant/create-image.yml push
+
+    - name: deploy bdd 
+      shell: docker run -d --name bdd -p 7474:7474 -p 7687:7687 -v /vagrant/neo4j/data:/data neo4j
+
+    - name: deploy service to swarm
+      shell: docker stack deploy --compose-file /vagrant/docker-compose.yml stack-test

@@ -1,0 +1,32 @@
+# file my_playbook.yml
+# Apply following play to all hosts in our inventory
+
+
+    - name: Update all packages to the latest version
+      apt:
+        upgrade: dist
+
+    - name: download key for docker
+      shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+    - name: fingerprint
+      apt_key:
+        id: 0EBFCD88
+
+    - name : add repo
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
+
+    - name: install docker
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: yes
+
+    - name: install pip
+      apt:
+        name: python3-pip
+        state: latest
+
+    - name: install docker-py
+      shell: pip3 install docker-py

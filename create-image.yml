@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+
+  datacollect: 
+    build: ./Data-Collection
+    image: 127.0.0.1:5000/datacollect
+
+
+  appliweb:
+    build: ./appliweb
+    image: 127.0.0.1:5000/appliweb
+
+  proxy:
+    build: ./proxy
+    image: 127.0.0.1:5000/proxy
+
+  autoscale:
+    build: ./autoscale
+    image: 127.0.0.1:5000/autoscale
+
+
+
+ 

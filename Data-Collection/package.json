@@ -1,0 +1,16 @@
+{
+  "name": "projet",
+  "version": "1.0.0",
+  "description": "",
+  "main": "recupData.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node recupData.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "neo4j-driver": "^1.5.0",
+    "xml2js": "^0.4.19"
+  }
+}

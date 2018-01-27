@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  
+  datacollect: 
+    image: 127.0.0.1:5000/datacollect
+
+  autoscale:
+    image: 127.0.0.1:5000/autoscale
+
+  appliweb:
+    image: 127.0.0.1:5000/appliweb
+    networks:
+      - traefik_webgateway
+    ports: 
+      - 8081:8081
+    deploy:
+      labels:
+        - "traefik.backend=appliweb"
+        - "traefik.port=8081"
+        - "traefik.frontend.rule=Host:appliweb.docker.localhost"
+        - "traefik.docker.network=traefik_webgateway"
+        - "orbiter=true"
+
+  proxy:
+    image: 127.0.0.1:5000/proxy
+    networks:
+      - traefik_webgateway
+    deploy:
+      labels:
+        - "traefik.backend=proxy"
+        - "traefik.port=80"
+        - "traefik.frontend.rule=PathPrefixStrip:/"
+        - "traefik.docker.network=traefik_webgateway"
+        - "orbiter=true"
+
+networks:
+  traefik_webgateway:
+    external: true
+
+
+ 

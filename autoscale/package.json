@@ -1,0 +1,20 @@
+{
+  "name": "autoscale",
+  "version": "1.0.0",
+  "description": "deamon to autoscale the system",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "keywords": [
+    "autoscale",
+    "docker",
+    "traefik"
+  ],
+  "author": "Sinoquet Tristan",
+  "license": "ISC",
+  "dependencies": {
+    "request": "^2.83.0"
+  }
+}

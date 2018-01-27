@@ -1,0 +1,11 @@
+- hosts: all
+  gather_facts: false
+  become: true
+  tasks:
+    - include: my_playbook.yml
+ 
+    - name: swarm join
+      shell: docker swarm join --token $(cat /vagrant/worker_token) {{ manager_ip }}:2377
+
+    - name: deploy bdd 
+      shell: docker run -d --name bdd -p 7474:7474 -p 7687:7687 -v /vagrant/neo4j/data:/data neo4j
